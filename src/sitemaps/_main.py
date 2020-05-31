@@ -1,6 +1,8 @@
-import sys
 import importlib
+import sys
 from contextlib import AsyncExitStack
+from pathlib import Path
+from typing import Sequence
 
 import httpx
 
@@ -8,7 +10,7 @@ from ._crawl import crawl
 from ._xml import compare, write
 
 
-async def main() -> int:
+async def main(argv: Sequence[str]) -> int:
     import argparse
 
     parser = argparse.ArgumentParser()
@@ -50,13 +52,13 @@ async def main() -> int:
         help="Compare existing output and fail if computed XML results.",
     )
 
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
     async with AsyncExitStack() as exit_stack:
         if args.asgi:
             try:
                 from asgi_lifespan import LifespanManager
-            except ImportError:
+            except ImportError:  # pragma: no cover
                 print("`asgi-lifespan` must be installed to use --asgi")
                 return 1
 
@@ -91,7 +93,12 @@ async def main() -> int:
         )
 
     if args.check:
-        return 0 if await compare(urls, args.output) else 1
+        if not Path(args.output).exists():
+            print(f"ERROR: path {args.output} does not exist")
+            return 1
+
+        is_synced = await compare(urls, args.output)
+        return 0 if is_synced else 1
 
     await write(urls, args.output)
     return 0

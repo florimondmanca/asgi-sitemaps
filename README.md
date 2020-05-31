@@ -21,7 +21,7 @@ Generate a sitemap for an ASGI app:
 python -m sitemaps --asgi --base-url 'https://mysite.io' '<MODULE>:<ATTRIBUTE>'
 ```
 
-Run in check mode (e.g. for enforcing sitemap is synced as part of CI checks):
+Run in check mode to verify the sitemap is in sync (e.g. as part of CI checks):
 
 ```bash
 python -m sitemaps --check [...]

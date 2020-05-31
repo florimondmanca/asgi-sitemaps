@@ -1,5 +1,8 @@
 -e .
 
+# Optional dependencies
+asgi-lifespan
+
 # Build and publishing.
 twine
 wheel
@@ -9,7 +12,11 @@ autoflake
 black
 flake8==3.8.*
 isort
+jinja2==2.*
 mypy
 pytest==5.*
+pytest-asyncio==0.12.*
 pytest-cov
 seed-isort-config
+starlette==0.13.*
+uvicorn==0.11.*

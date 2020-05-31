@@ -17,8 +17,9 @@ async def crawl(
     client: httpx.AsyncClient = None,
     max_tasks: int = 100,
 ) -> Sequence[str]:
-    if client is None:
-        client = httpx.AsyncClient()
+    client = httpx.AsyncClient() if client is None else client
+
+    root_url = urljoin(root_url, "/")
 
     async with client, anyio.create_task_group() as tg:
         config = Config(
@@ -37,7 +38,7 @@ async def crawl(
 
 
 async def _add(url: str, parent_url: str, config: Config, state: State) -> None:
-    url = urljoin(url, parent_url)
+    url = urljoin(parent_url, url)
 
     if (
         not url.startswith(config.root_url)

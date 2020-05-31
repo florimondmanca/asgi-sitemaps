@@ -13,7 +13,7 @@ def make_xml(urls: Sequence[str]) -> str:
             'http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">'
         )
         for url in urls:
-            yield f"  <url><loc>{url}</loc><changefreq>daily</changefreq></url>"
+            yield 4 * " " + f"<url><loc>{url}</loc><changefreq>daily</changefreq></url>"
         yield "</urlset>"
 
     content = "\n".join(lines())
