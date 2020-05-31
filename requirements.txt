@@ -1,0 +1,15 @@
+-e .
+
+# Build and publishing.
+twine
+wheel
+
+# Tooling and tests.
+autoflake
+black
+flake8==3.8.*
+isort
+mypy
+pytest==5.*
+pytest-cov
+seed-isort-config

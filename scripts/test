@@ -1,0 +1,17 @@
+#!/bin/sh
+
+PREFIX=""
+if [ -d "venv" ] ; then
+  PREFIX="venv/bin/"
+fi
+
+set -x
+
+if [ -z $CI ]; then
+  set +e
+  scripts/check
+fi
+
+set -e
+
+${PREFIX}pytest $@
