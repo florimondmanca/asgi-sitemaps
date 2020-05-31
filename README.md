@@ -5,7 +5,7 @@
 ![Python versions](https://img.shields.io/pypi/pyversions/sitemaps.svg)
 [![Package version](https://badge.fury.io/py/wsx.svg)](https://pypi.org/project/sitemaps)
 
-Sitemaps is a Python command line tool and library to automatically generate `sitemap.xml` files from a web server or ASGI application. Powered by [HTTPX](https://github.com/encode/httpx) and [anyio](https://github.com/agronholm/anyio).
+Sitemaps is a Python command line tool and library to generate sitemap files by crawling web servers or ASGI apps. Sitemaps is powered by [HTTPX](https://github.com/encode/httpx) and [anyio](https://github.com/agronholm/anyio).
 
 _**Note**: This is alpha software. Be sure to pin your dependencies to the latest minor release._
 
@@ -45,7 +45,7 @@ python -m sitemaps --check [...]
 
 ## Features
 
-- Support for crawling a live web server.
+- Support for crawling any live web server.
 - Support for crawling an ASGI app directly (i.e. without having to spin up a server).
 - `--check` mode.
 - Invoke from the command line, or use the programmatic async API (supports asyncio and trio).
@@ -62,7 +62,7 @@ $ pip install sitemaps
 
 Sitemaps requires Python 3.7+.
 
-## Command line usage
+## Command line reference
 
 ```console
 $ python -m sitemaps --help
@@ -89,7 +89,7 @@ optional arguments:
                         differs.
 ```
 
-## Programmatic usage
+## Programmatic API
 
 ### Live server
 
@@ -98,7 +98,7 @@ import sitemaps
 
 async def main():
     urls = await sitemaps.crawl("https://example.org")
-    with open("sitemap.xml") as f:
+    with open("sitemap.xml", "w") as f:
         f.write(sitemaps.make_xml(urls))
 ```
 
@@ -112,9 +112,9 @@ from .app import app
 
 async def main():
     async with httpx.AsyncClient(app=app) as client:
-        urls = await sitemaps.crawl("http://mysite.io", client=client)
+        urls = await sitemaps.crawl("http://testserver", client=client)
 
-    with open("sitemap.xml") as f:
+    with open("sitemap.xml", "w") as f:
         f.write(sitemaps.make_xml(urls))
 ```
 
