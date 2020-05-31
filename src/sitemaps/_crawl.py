@@ -1,7 +1,7 @@
 import re
 from functools import partial
 from typing import Sequence
-from urllib.parse import urljoin
+from urllib.parse import urljoin, urldefrag
 
 import anyio
 import httpx
@@ -35,6 +35,9 @@ async def crawl(
 
 async def _add(url: str, parent_url: str, config: Config, state: State) -> None:
     url = urljoin(parent_url, url)
+    url, _ = urldefrag(url)
+    if not url.endswith("/"):
+        url = f"{url}/"
 
     if (
         not url.startswith(config.root_url)
