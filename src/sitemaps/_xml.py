@@ -1,9 +1,15 @@
-from typing import Iterator, Sequence
+from typing import Callable, Iterator, Sequence
 
 import anyio
 
+URLTagFunc = Callable[[str], str]
 
-def make_xml(urls: Sequence[str]) -> str:
+
+def default_urltag(url: str) -> str:
+    return f"<url><loc>{url}</loc><changefreq>daily</changefreq></url>"
+
+
+def make_xml(urls: Sequence[str], urltag: URLTagFunc = default_urltag) -> str:
     def lines() -> Iterator[str]:
         yield '<?xml version="1.0" encoding="utf-8"?>'
         yield (
@@ -13,7 +19,7 @@ def make_xml(urls: Sequence[str]) -> str:
             'http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">'
         )
         for url in urls:
-            yield 4 * " " + f"<url><loc>{url}</loc><changefreq>daily</changefreq></url>"
+            yield 4 * " " + urltag(url)
         yield "</urlset>"
 
     content = "\n".join(lines())

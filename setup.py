@@ -20,7 +20,10 @@ def get_long_description() -> str:
 setup(
     name="sitemaps",
     version=get_version("sitemaps"),
-    description="Sitemap generation with support for Python ASGI web apps",
+    description=(
+        "Sitemap generation for Python, "
+        "with support for crawling ASGI web apps directly."
+    ),
     long_description=get_long_description(),
     long_description_content_type="text/markdown",
     url="http://github.com/florimondmanca/sitemaps",

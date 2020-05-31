@@ -7,12 +7,10 @@ import anyio
 import httpx
 
 from ._models import Config, State
-from ._utils import replace_root
 
 
 async def crawl(
     root_url: str,
-    base_url: str = None,
     ignore: Sequence[str] = (),
     client: httpx.AsyncClient = None,
     max_tasks: int = 100,
@@ -32,9 +30,7 @@ async def crawl(
         state = State(discovered_urls=set(), results=set())
         await _add(root_url, parent_url="", config=config, state=state)
 
-    return sorted(
-        (replace_root(url, base_url) if base_url else url) for url in state.results
-    )
+    return sorted(state.results)
 
 
 async def _add(url: str, parent_url: str, config: Config, state: State) -> None:
