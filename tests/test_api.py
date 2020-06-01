@@ -4,7 +4,6 @@ import asgi_sitemaps
 
 from .app import app
 
-
 EXPECTED_URLS = """
 {0}/
 {0}/child/
