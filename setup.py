@@ -18,22 +18,19 @@ def get_long_description() -> str:
 
 
 setup(
-    name="sitemaps",
-    version=get_version("sitemaps"),
-    description=(
-        "Sitemap generation for Python, "
-        "with support for crawling ASGI web apps directly."
-    ),
+    name="asgi-sitemaps",
+    version=get_version("asgi_sitemaps"),
+    description="Sitemap generation for ASGI applications.",
     long_description=get_long_description(),
     long_description_content_type="text/markdown",
-    url="http://github.com/florimondmanca/sitemaps",
+    url="http://github.com/florimondmanca/asgi-sitemaps",
     author="Florimond Manca",
     author_email="florimond.manca@gmail.com",
     packages=find_packages("src"),
     package_dir={"": "src"},
     include_package_data=True,
     zip_safe=False,
-    install_requires=["httpx>=0.12,<1.0", "anyio==1.*"],
+    install_requires=["httpx>=0.12,<1.0", "anyio==1.*", "asgi-lifespan==1.*"],
     python_requires=">=3.7",
     license="MIT",
     classifiers=[

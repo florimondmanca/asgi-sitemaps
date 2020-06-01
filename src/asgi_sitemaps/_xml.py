@@ -1,7 +1,5 @@
 from typing import Callable, Iterator, Sequence
 
-import anyio
-
 URLTagFunc = Callable[[str], str]
 
 
@@ -21,17 +19,6 @@ def make_xml(urls: Sequence[str], urltag: URLTagFunc = default_urltag) -> str:
         for url in urls:
             yield 4 * " " + urltag(url)
         yield "</urlset>"
+        yield ""
 
-    content = "\n".join(lines())
-    return f"{content}\n"
-
-
-async def compare(urls: Sequence[str], output: str) -> bool:
-    async with await anyio.aopen(output) as f:
-        content = await f.read()
-        return content == make_xml(urls)
-
-
-async def write(urls: Sequence[str], output: str) -> None:
-    async with await anyio.aopen(output, mode="w") as f:
-        await f.write(make_xml(urls))
+    return "\n".join(lines())
