@@ -1,8 +1,5 @@
 -e .
 
-# Optional dependencies
-asgi-lifespan
-
 # Build and publishing.
 twine
 wheel
@@ -19,4 +16,3 @@ pytest-asyncio==0.12.*
 pytest-cov
 seed-isort-config
 starlette==0.13.*
-uvicorn==0.11.*

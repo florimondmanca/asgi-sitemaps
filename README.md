@@ -1,53 +1,38 @@
-# sitemaps
+# asgi-sitemaps
 
-[![Build Status](https://dev.azure.com/florimondmanca/public/_apis/build/status/florimondmanca.sitemaps?branchName=master)](https://dev.azure.com/florimondmanca/public/_build/latest?definitionId=11&branchName=master)
-[![Coverage](https://codecov.io/gh/florimondmanca/sitemaps/branch/master/graph/badge.svg)](https://codecov.io/gh/florimondmanca/sitemaps)
-![Python versions](https://img.shields.io/pypi/pyversions/sitemaps.svg)
-[![Package version](https://badge.fury.io/py/sitemaps.svg)](https://pypi.org/project/sitemaps)
+[![Build Status](https://dev.azure.com/florimondmanca/public/_apis/build/status/florimondmanca.asgi-sitemaps?branchName=master)](https://dev.azure.com/florimondmanca/public/_build/latest?definitionId=11&branchName=master)
+[![Coverage](https://codecov.io/gh/florimondmanca/asgi-sitemaps/branch/master/graph/badge.svg)](https://codecov.io/gh/florimondmanca/asgi-sitemaps)
+![Python versions](https://img.shields.io/pypi/pyversions/asgi-sitemaps.svg)
+[![Package version](https://badge.fury.io/py/asgi-sitemaps.svg)](https://pypi.org/project/asgi-sitemaps)
 
-Sitemaps is a Python command line tool and library to generate sitemap files by crawling web servers or ASGI apps. Sitemaps is powered by [HTTPX](https://github.com/encode/httpx) and [anyio](https://github.com/agronholm/anyio).
+Generate and check sitemap files from ASGI apps without having to spin up a server. Powered by [HTTPX](https://github.com/encode/httpx) and [anyio](https://github.com/agronholm/anyio).
 
 _**Note**: This is alpha software. Be sure to pin your dependencies to the latest minor release._
 
 ## Quickstart
 
-### Live server
-
 ```bash
-python -m sitemaps https://example.org
+python -m asgi_sitemaps 'example:app' --base-url https://app.example.io > sitemap.xml
 ```
-
-Example output:
 
 ```console
 $ cat sitemap.xml
 <?xml version="1.0" encoding="utf-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
-    <url><loc>https://example.org/</loc><changefreq>daily</changefreq></url>
+    <url><loc>https://app.example.io/</loc><changefreq>daily</changefreq></url>
 </urlset>
 ```
 
-### ASGI app
-
-HTTP requests are issued to the ASGI app directly. The target URL is only used as a base URL for building sitemap entries.
+Use the `--check` mode to verify that the sitemap is in sync (e.g. as part of CI checks):
 
 ```bash
-python -m sitemaps --asgi '<module>:<attribute>' http://testserver
-```
-
-### Check mode
-
-Useful to verify that the sitemap is in sync (e.g. as part of CI checks):
-
-```bash
-python -m sitemaps --check [...]
+cat sitemap.xml | python -m asgi_sitemaps --check 'example:app' --base-url https://app.example.io
 ```
 
 ## Features
 
-- Support for crawling any live web server.
-- Support for crawling an ASGI app directly (i.e. without having to spin up a server).
-- `--check` mode.
+- Offline sitemap generation from an ASGI app callable.
+- Support for `--check` mode.
 - Invoke from the command line, or use the programmatic async API (supports asyncio and trio).
 - Fully type annotated.
 - 100% test coverage.
@@ -57,83 +42,77 @@ python -m sitemaps --check [...]
 Install with pip:
 
 ```shell
-$ pip install sitemaps
+$ pip install asgi-sitemaps
 ```
 
-Sitemaps requires Python 3.7+.
+`asgi-sitemaps` requires Python 3.7+.
 
 ## Command line reference
 
 ```console
-$ python -m sitemaps --help
-usage: __main__.py [-h] [-o OUTPUT] [-I IGNORE_PATH_PREFIX] [--asgi ASGI]
+$ python -m asgi_sitemaps --help
+usage: __main__.py [-h] [--base-url BASE_URL] [-I IGNORE_PATH_PREFIX]
                    [--max-concurrency MAX_CONCURRENCY] [--check]
-                   target
+                   app
 
 positional arguments:
-  target                The base URL used to crawl the website and build
-                        sitemap URL tags.
+  app                   Path to an ASGI app, formatted as
+                        '<module>:<attribute>'.
 
 optional arguments:
   -h, --help            show this help message and exit
-  -o OUTPUT, --output OUTPUT
-                        Output file path.
+  --base-url BASE_URL   Base URL to use when building sitemap entries.
+                        (default: http://testserver/)
   -I IGNORE_PATH_PREFIX, --ignore-path-prefix IGNORE_PATH_PREFIX
-                        Ignore URLs for this path prefix. Can be used multiple
-                        times.
-  --asgi ASGI           Path to an ASGI app, formatted as
-                        '<module>:<attribute>'.
+                        Prevent crawling URLs that start with this path
+                        prefix. Can be used multiple times. (default: [])
   --max-concurrency MAX_CONCURRENCY
-                        Maximum number of URLs to process concurrently.
-  --check               Compare existing output and fail if computed XML
-                        differs.
+                        Maximum number of concurrently processed URLs.
+                        (default: 100)
+  --check               Read existing sitemap from stdin and fail if computed
+                        sitemap differs. (default: False)
 ```
 
 ## Programmatic API
 
-### Live server
+The `.crawl()` async function takes the following arguments:
+
+- `app`: an ASGI application instance.
+- `base_url`: see `--base-url`
+- `ignore`: see `--ignore-path-prefix`.
+- `max_concurrency`: see `--max-concurrency`.
+
+It returns a list of strings referring to the discovered URLs.
+
+You can use the `.make_url(urls)` helper to generate the sitemap XML and save it as is appropriate for your use case.
+
+Example usage, outputting the sitemap to a `sitemap.xml` file (mimicking the CLI behavior):
 
 ```python
-import sitemaps
-
-async def main():
-    urls = await sitemaps.crawl("https://example.org")
-    with open("sitemap.xml", "w") as f:
-        f.write(sitemaps.make_xml(urls))
-```
-
-### ASGI app
-
-```python
-import httpx
-import sitemaps
+import asgi_sitemaps
 
 from .app import app
 
 async def main():
-    async with httpx.AsyncClient(app=app) as client:
-        urls = await sitemaps.crawl("http://testserver", client=client)
-
+    urls = await asgi_sitemaps.crawl(app)
     with open("sitemap.xml", "w") as f:
-        f.write(sitemaps.make_xml(urls))
+        f.write(asgi_sitemaps.make_xml(urls))
 ```
-
-### Customizing URL tags
 
 By default, `.make_xml()` generates `<url>` tags with a `daily` change frequency. You can customize the generation of URL tags by passing a custom `urltag` callable:
 
 ```python
 from urllib.parse import urlsplit
 
+import asgi_sitemaps
+
 def urltag(url):
     path = urlsplit(url).path
     changefreq = "monthly" if path.startswith("/reports") else "daily"
     return f"<url><loc>{url}</loc><changefreq>{changefreq}</changefreq></url>"
 
-async def main():
-    urls = await sitemaps.crawl(...)
-    with open("sitemap.xml", "w") as f:
-      f.write(sitemaps.make_xml(urls, urltag=urltag))
+urls = ...
+xml = asgi_sitemaps.make_xml(urls, urltag=urltag)
 ```
 
 ## License

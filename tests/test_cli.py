@@ -1,77 +1,58 @@
-from pathlib import Path
+import io
 from textwrap import dedent
 
 import pytest
 
-import sitemaps
-
-from .utils import Server
+import asgi_sitemaps
 
 EXPECTED_SITEMAP = dedent(
     """
 <?xml version="1.0" encoding="utf-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
-    <url><loc>http://localhost:8000/</loc><changefreq>daily</changefreq></url>
-    <url><loc>http://localhost:8000/child/</loc><changefreq>daily</changefreq></url>
+    <url><loc>{0}/</loc><changefreq>daily</changefreq></url>
+    <url><loc>{0}/child/</loc><changefreq>daily</changefreq></url>
 </urlset>
 """  # noqa
 ).strip()
 
 
 @pytest.mark.asyncio
-async def test_website(tmp_path: Path, server: Server) -> None:
-    output = tmp_path / "sitemap.xml"
-    target = str(server.url)
-    args = ["-o", str(output), target]
-
-    code = await sitemaps.main(args)
+async def test_main() -> None:
+    args = ["tests.app:app"]
+    stdout = io.StringIO()
+    code = await asgi_sitemaps.main(args, stdout=stdout)
     assert code == 0
-    assert output.read_text().strip() == EXPECTED_SITEMAP
+    stdout.seek(0)
+    assert stdout.read().strip() == EXPECTED_SITEMAP.format("http://testserver")
 
 
 @pytest.mark.asyncio
-async def test_check(tmp_path: Path, server: Server) -> None:
-    output = tmp_path / "sitemap.xml"
-    target = str(server.url)
-    args = ["-o", str(output), target]
-
-    code = await sitemaps.main(args + ["--check"])
-    assert code == 1
-
-    code = await sitemaps.main(args)
+async def test_base_url() -> None:
+    args = ["tests.app:app", "--base-url", "https://mysite.io"]
+    stdout = io.StringIO()
+    code = await asgi_sitemaps.main(args, stdout=stdout)
     assert code == 0
-
-    code = await sitemaps.main(args + ["--check"])
-    assert code == 0
-
-    output.write_text(EXPECTED_SITEMAP + "some difference")
-    code = await sitemaps.main(args + ["--check"])
-    assert code == 1
+    stdout.seek(0)
+    assert stdout.read().strip() == EXPECTED_SITEMAP.format("https://mysite.io")
 
 
 @pytest.mark.asyncio
-async def test_asgi(tmp_path: Path) -> None:
-    output = tmp_path / "sitemap.xml"
-    app = "tests.app:app"
-    target = "http://localhost:8000"
-    args = [
-        "--asgi",
-        app,
-        "-o",
-        str(output),
-        target,
-    ]
+async def test_check() -> None:
+    args = ["--check", "tests.app:app"]
+    stdin = io.StringIO(EXPECTED_SITEMAP.format("http://testserver"))
 
-    code = await sitemaps.main(args)
+    code = await asgi_sitemaps.main(args, stdin=stdin)
     assert code == 0
-    assert output.read_text().strip() == EXPECTED_SITEMAP
+
+    stdin.seek(0)
+    stdin.write("different")
+    code = await asgi_sitemaps.main(args, stdin=stdin)
+    assert code == 1
 
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("app", ["doesnotexist:app", "wrongformat"])
-async def test_asgi_invalid_path(app: str) -> None:
-    target = "http://localhost:8000"
-    args = ["--asgi", app, target]
-
-    code = await sitemaps.main(args)
+async def test_invalid_path(app: str) -> None:
+    args = [app]
+    code = await asgi_sitemaps.main(args)
     assert code == 1
