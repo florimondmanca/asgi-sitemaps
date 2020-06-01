@@ -9,7 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 
 - Project was renamed from `sitemaps` to `asgi-sitemaps` - sitemap generation for ASGI apps. (Pull #2)
-- Change a options of CLI and programmatic API to fit new "ASGI-only" project scope. (Pull #2)
+- Change options of CLI and programmatic API to fit new "ASGI-only" project scope. (Pull #2)
 - CLI now reads from stdin (for `--check` mode) and outputs sitemap to stdout. (Pull #2)
 
 ### Removed
