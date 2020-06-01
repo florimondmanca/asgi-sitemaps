@@ -37,9 +37,6 @@ async def main(
     stdout: IO[str] = sys.stdout,
     stderr: IO[str] = sys.stderr,
 ) -> int:
-    def echo_error(message: str) -> None:
-        print(f"ERROR: {message}", file=stderr)
-
     parser = argparse.ArgumentParser(
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )
@@ -78,8 +75,8 @@ async def main(
 
     app = load_asgi_app(args.app)
     if app is None:
-        echo_error(
-            f"Could not load ASGI app. Import string {args.app!r} "
+        stderr.write(
+            f"ERROR: Could not load ASGI app. Import string {args.app!r} "
             f"must be formatted as '<module>:<attribute>'."
         )
         return 1
