@@ -19,8 +19,12 @@ class SitemapApp:
             self._sitemaps, scope=scope, domain=self._domain
         )
 
+        headers = [
+            [b"content-type", b"application/xml"],
+            [b"content-length", b"%d" % len(content)],
+        ]
+
         message = await receive()
         assert message["type"] == "http.request"
-        await send({"type": "http.response.start", "status": 200, "headers": []})
-        await send({"type": "http.response.body", "body": content, "more_body": True})
-        await send({"type": "http.response.body", "body": b"", "more_body": False})
+        await send({"type": "http.response.start", "status": 200, "headers": headers})
+        await send({"type": "http.response.body", "body": content})
