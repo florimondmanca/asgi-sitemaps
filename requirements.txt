@@ -8,8 +8,8 @@ wheel
 autoflake
 black
 flake8==3.8.*
+httpx==0.13.*
 isort==5.*
-jinja2==2.*
 mypy
 pytest==5.*
 pytest-asyncio==0.12.*
