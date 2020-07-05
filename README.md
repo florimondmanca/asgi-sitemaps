@@ -5,7 +5,7 @@
 ![Python versions](https://img.shields.io/pypi/pyversions/asgi-sitemaps.svg)
 [![Package version](https://badge.fury.io/py/asgi-sitemaps.svg)](https://pypi.org/project/asgi-sitemaps)
 
-[Sitemap](https://www.sitemaps.org) generation for ASGI apps. Inspired by [Django's sitemap framework](https://docs.djangoproject.com/en/3.0/ref/contrib/sitemaps/).
+[Sitemap](https://www.sitemaps.org) generation for ASGI applications. Inspired by [Django's sitemap framework](https://docs.djangoproject.com/en/3.0/ref/contrib/sitemaps/).
 
 _**Note**: This is alpha software. Be sure to pin your dependencies to the latest minor release._
 

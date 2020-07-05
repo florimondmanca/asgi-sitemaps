@@ -32,18 +32,18 @@ async def test_sitemap() -> None:
 
     content = dedent(
         """
-    <?xml version="1.0" encoding="utf-8"?>
-    <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-        <url>
-            <loc>http://example.io/</loc>
-            <priority>0.5</priority>
-        </url>
-        <url>
-            <loc>http://example.io/about</loc>
-            <priority>0.5</priority>
-        </url>
-    </urlset>
-    """
+        <?xml version="1.0" encoding="utf-8"?>
+        <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+            <url>
+                <loc>http://example.io/</loc>
+                <priority>0.5</priority>
+            </url>
+            <url>
+                <loc>http://example.io/about</loc>
+                <priority>0.5</priority>
+            </url>
+        </urlset>
+        """
     ).lstrip()
 
     assert r.status_code == 200
@@ -93,25 +93,25 @@ async def test_sitemap_fields() -> None:
 
     content = dedent(
         """
-    <?xml version="1.0" encoding="utf-8"?>
-    <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-        <url>
-            <loc>https://example.io/page1</loc>
-            <lastmod>2020-01-01</lastmod>
-            <changefreq>daily</changefreq>
-            <priority>0.7</priority>
-        </url>
-        <url>
-            <loc>https://example.io/page2</loc>
-            <changefreq>monthly</changefreq>
-            <priority>0.7</priority>
-        </url>
-        <url>
-            <loc>https://example.io/page3</loc>
-            <lastmod>2018-03-14</lastmod>
-            <priority>0.7</priority>
-        </url>
-    </urlset>
+        <?xml version="1.0" encoding="utf-8"?>
+        <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+            <url>
+                <loc>https://example.io/page1</loc>
+                <lastmod>2020-01-01</lastmod>
+                <changefreq>daily</changefreq>
+                <priority>0.7</priority>
+            </url>
+            <url>
+                <loc>https://example.io/page2</loc>
+                <changefreq>monthly</changefreq>
+                <priority>0.7</priority>
+            </url>
+            <url>
+                <loc>https://example.io/page3</loc>
+                <lastmod>2018-03-14</lastmod>
+                <priority>0.7</priority>
+            </url>
+        </urlset>
     """
     ).lstrip()
 
@@ -142,17 +142,17 @@ async def test_sitemap_async_items() -> None:
 
     content = dedent(
         """
-    <?xml version="1.0" encoding="utf-8"?>
-    <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-        <url>
-            <loc>http://example.io/</loc>
-            <priority>0.5</priority>
-        </url>
-        <url>
-            <loc>http://example.io/about</loc>
-            <priority>0.5</priority>
-        </url>
-    </urlset>
+        <?xml version="1.0" encoding="utf-8"?>
+        <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+            <url>
+                <loc>http://example.io/</loc>
+                <priority>0.5</priority>
+            </url>
+            <url>
+                <loc>http://example.io/about</loc>
+                <priority>0.5</priority>
+            </url>
+        </urlset>
     """
     ).lstrip()
 
@@ -189,13 +189,13 @@ async def test_sitemap_scope() -> None:
 
     content = dedent(
         """
-    <?xml version="1.0" encoding="utf-8"?>
-    <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-        <url>
-            <loc>http://example.io/</loc>
-            <priority>0.5</priority>
-        </url>
-    </urlset>
+        <?xml version="1.0" encoding="utf-8"?>
+        <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+            <url>
+                <loc>http://example.io/</loc>
+                <priority>0.5</priority>
+            </url>
+        </urlset>
     """
     ).lstrip()
 
