@@ -8,7 +8,7 @@ wheel
 autoflake
 black
 flake8==3.8.*
-isort
+isort==5.*
 jinja2==2.*
 mypy
 pytest==5.*
