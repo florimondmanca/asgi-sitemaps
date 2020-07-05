@@ -30,7 +30,7 @@ setup(
     package_dir={"": "src"},
     include_package_data=True,
     zip_safe=False,
-    install_requires=["httpx>=0.12,<1.0", "anyio==1.*", "asgi-lifespan==1.*"],
+    install_requires=[],
     python_requires=">=3.7",
     license="MIT",
     classifiers=[
