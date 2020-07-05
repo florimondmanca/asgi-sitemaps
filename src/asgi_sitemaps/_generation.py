@@ -1,5 +1,5 @@
 from typing import AsyncIterable, AsyncIterator, Dict, Iterable, Sequence, cast
-from urllib.parse import urljoin
+from urllib.parse import urljoin, urlsplit
 
 from ._models import SCOPE_CTX_VAR, Sitemap
 from ._types import ItemsTypes, Scope, T
@@ -16,13 +16,13 @@ async def generate_sitemap(
 
         for sitemap in sitemaps:
             async for item in _ensure_async_iterator(sitemap.items()):
-                yield 2 * b" " + b"<url>"
+                yield 4 * b" " + b"<url>"
 
                 fields = get_fields(sitemap, item, scope=scope, domain=domain)
                 for name, value in fields.items():
-                    yield 4 * b" " + f"<{name}>{value}</{name}>".encode("utf-8")
+                    yield 8 * b" " + f"<{name}>{value}</{name}>".encode("utf-8")
 
-                yield 2 * b" " + b"</url>"
+                yield 4 * b" " + b"</url>"
 
         yield b"</urlset>"
         yield b""
@@ -44,17 +44,24 @@ async def _ensure_async_iterator(items: ItemsTypes[T]) -> AsyncIterator[T]:
 def get_fields(
     sitemap: Sitemap[T], item: T, *, scope: Scope, domain: str
 ) -> Dict[str, str]:
-    protocol = scope["scheme"] if sitemap.protocol == "auto" else sitemap.protocol
+    if sitemap.protocol == "auto":
+        protocol = scope["scheme"]
+    else:
+        protocol = sitemap.protocol
 
     location = sitemap.location(item)
     lastmod = sitemap.lastmod(item)
     changefreq = sitemap.changefreq(item)
     priority = sitemap.priority(item)
 
+    r = urlsplit(location)
+    if r.scheme or r.netloc:
+        raise ValueError(f"Location contains scheme or domain: {location}")
+
     fields = {}
     fields["loc"] = urljoin(f"{protocol}://{domain}", location)
     if lastmod is not None:
-        fields["lastmod"] = lastmod.strftime("Y-m-d")
+        fields["lastmod"] = lastmod.strftime("%Y-%m-%d")
     if changefreq is not None:
         fields["changefreq"] = changefreq
     fields["priority"] = str(priority)
