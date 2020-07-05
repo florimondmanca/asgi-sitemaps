@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## 0.3.1 - 2020-07-05
+
+### Fixed
+
+- Fix `Scope` type hint: values are now `Any`.
+
 ## 0.3.0 - 2020-07-05
 
 This release changes the approach from "scrape the ASGI app to gather URLs" to a programmatic class-based API inspired by Django's sitemap framework.
