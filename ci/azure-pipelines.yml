@@ -39,4 +39,5 @@ stages:
     jobs:
       - template: job--python-publish.yml@templates
         parameters:
-          token: $(pypiToken)
+          repository: testpypi
+          token: $(pypiTestToken)
