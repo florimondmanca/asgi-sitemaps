@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## 0.3.0 - 2020-07-05
+
+This release changes the approach from "scrape the ASGI app to gather URLs" to a programmatic class-based API inspired by Django's sitemap framework.
+
+As such, the command line application does not exist anymore. Users are expected to define `Sitemap` classes, compose them into a `SitemapApp` endpoint, and add that to their ASGI app routing table.
+
+See the new `README.md` documentation for more information.
+
+### Changed
+
+- Switch to a class-based dynamic endpoint API. (Pull #4)
+
 ## 0.2.0 - 2020-06-01
 
 ### Changed
