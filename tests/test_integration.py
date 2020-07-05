@@ -163,6 +163,59 @@ async def test_sitemap_async_items() -> None:
 
 
 @pytest.mark.asyncio
+async def test_sitemap_sections() -> None:
+    """
+    Multiple sitemap sections can be provided.
+    """
+
+    class StaticSitemap(asgi_sitemaps.Sitemap[str]):
+        def items(self) -> List[str]:
+            return ["/", "/about"]
+
+        def location(self, item: str) -> str:
+            return item
+
+    class BlogSitemap(asgi_sitemaps.Sitemap[str]):
+        def items(self) -> List[str]:
+            return ["/blog/articles/"]
+
+        def location(self, item: str) -> str:
+            return item
+
+    app = asgi_sitemaps.SitemapApp(
+        [StaticSitemap(), BlogSitemap()], domain="example.io"
+    )
+
+    async with httpx.AsyncClient(app=app) as client:
+        r = await client.get("http://testserver")
+
+    content = dedent(
+        """
+        <?xml version="1.0" encoding="utf-8"?>
+        <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+            <url>
+                <loc>http://example.io/</loc>
+                <priority>0.5</priority>
+            </url>
+            <url>
+                <loc>http://example.io/about</loc>
+                <priority>0.5</priority>
+            </url>
+            <url>
+                <loc>http://example.io/blog/articles/</loc>
+                <priority>0.5</priority>
+            </url>
+        </urlset>
+        """
+    ).lstrip()
+
+    assert r.status_code == 200
+    assert r.text == content
+    assert r.headers["content-type"] == "application/xml"
+    assert r.headers["content-length"] == str(len(content))
+
+
+@pytest.mark.asyncio
 async def test_sitemap_scope() -> None:
     """
     Sitemaps can use `self.scope` to access the ASGI scope.
