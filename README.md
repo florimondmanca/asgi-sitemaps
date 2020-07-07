@@ -169,6 +169,7 @@ Here is an example with [Starlette](https://www.starlette.io) where we build sit
 ```python
 # server/sitemap.py
 import asgi_sitemaps
+from starlette.datastructures import URL
 from starlette.requests import Request
 
 class StaticSitemap(asgi_sitemaps.Sitemap):
@@ -177,7 +178,8 @@ class StaticSitemap(asgi_sitemaps.Sitemap):
 
     def location(self, name: str):
         request = Request(scope=self.scope)
-        return request.url_for(name)
+        url = request.url_for(name)
+        return URL(url).path
 ```
 
 The corresponding Starlette routing table could look something like this:
