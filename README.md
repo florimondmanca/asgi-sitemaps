@@ -61,7 +61,7 @@ First, declare a sitemap section by subclassing `Sitemap`, then wrap it in a `Si
 import asgi_sitemaps
 
 class Sitemap(asgi_sitemaps.Sitemap):
-    async def items(self):
+    def items(self):
         return ["/"]
 
     def location(self, item: str):
