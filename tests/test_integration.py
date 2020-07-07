@@ -124,6 +124,46 @@ async def test_sitemap_fields() -> None:
 @pytest.mark.asyncio
 async def test_sitemap_async_items() -> None:
     """
+    `.items()` supports returning an awaitable of items.
+    """
+
+    class Sitemap(asgi_sitemaps.Sitemap[str]):
+        async def items(self) -> List[str]:
+            return ["/", "/about"]
+
+        def location(self, item: str) -> str:
+            return item
+
+    app = asgi_sitemaps.SitemapApp(Sitemap(), domain="example.io")
+
+    async with httpx.AsyncClient(app=app) as client:
+        r = await client.get("http://testserver")
+
+    content = dedent(
+        """
+        <?xml version="1.0" encoding="utf-8"?>
+        <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+            <url>
+                <loc>http://example.io/</loc>
+                <priority>0.5</priority>
+            </url>
+            <url>
+                <loc>http://example.io/about</loc>
+                <priority>0.5</priority>
+            </url>
+        </urlset>
+    """
+    ).lstrip()
+
+    assert r.status_code == 200
+    assert r.text == content
+    assert r.headers["content-type"] == "application/xml"
+    assert r.headers["content-length"] == str(len(content))
+
+
+@pytest.mark.asyncio
+async def test_sitemap_async_iterable_items() -> None:
+    """
     `.items()` supports returning async iterables.
     """
 

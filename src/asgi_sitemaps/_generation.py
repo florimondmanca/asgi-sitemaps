@@ -1,4 +1,13 @@
-from typing import AsyncIterable, AsyncIterator, Dict, Iterable, Sequence, cast
+import inspect
+from typing import (
+    AsyncIterable,
+    AsyncIterator,
+    Awaitable,
+    Dict,
+    Iterable,
+    Sequence,
+    cast,
+)
 from urllib.parse import urljoin, urlsplit
 
 from ._models import SCOPE_CTX_VAR, Sitemap
@@ -34,6 +43,10 @@ async def _ensure_async_iterator(items: ItemsTypes[T]) -> AsyncIterator[T]:
     if hasattr(items, "__aiter__"):
         items = cast(AsyncIterable[T], items)
         async for item in items:
+            yield item
+    elif inspect.isawaitable(items):
+        items = cast(Awaitable[Iterable[T]], items)
+        for item in await items:
             yield item
     else:
         items = cast(Iterable[T], items)
