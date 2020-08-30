@@ -6,7 +6,7 @@ wheel
 
 # Tooling and tests.
 autoflake
-black
+black==20.8b1
 flake8==3.8.*
 httpx==0.13.*
 isort==5.*
