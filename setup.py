@@ -25,7 +25,7 @@ setup(
     long_description_content_type="text/markdown",
     url="http://github.com/florimondmanca/asgi-sitemaps",
     author="Florimond Manca",
-    author_email="florimond.manca@gmail.com",
+    author_email="florimond.manca@protonmail.com",
     packages=find_packages("src"),
     package_dir={"": "src"},
     include_package_data=True,
@@ -42,5 +42,7 @@ setup(
         "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
     ],
 )
