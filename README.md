@@ -7,8 +7,6 @@
 
 [Sitemap](https://www.sitemaps.org) generation for ASGI applications. Inspired by [Django's sitemap framework](https://docs.djangoproject.com/en/3.0/ref/contrib/sitemaps/).
 
-_**Note**: This is alpha software. Be sure to pin your dependencies to the latest minor release._
-
 **Contents**
 
 - [Features](#features)
@@ -35,7 +33,7 @@ _**Note**: This is alpha software. Be sure to pin your dependencies to the lates
 Install with pip:
 
 ```shell
-$ pip install asgi-sitemaps
+$ pip install 'asgi-sitemaps==1.*'
 ```
 
 `asgi-sitemaps` requires Python 3.7+.

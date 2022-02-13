@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## 1.0 - 2022-02-13
+
+### Added
+
+- _Now marked as Production/Stable software._ (Pull #14)
+- Add official support for Python 3.9 and Python 3.10. (Pull #13)
+
 ## 0.3.2 - 2020-07-07
 
 ### Fixed
