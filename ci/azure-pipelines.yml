@@ -4,7 +4,7 @@ resources:
       type: github
       endpoint: github
       name: florimondmanca/azure-pipelines-templates
-      ref: refs/tags/3.2
+      ref: refs/tags/5.0
 
 trigger:
   - master
@@ -39,4 +39,5 @@ stages:
     jobs:
       - template: job--python-publish.yml@templates
         parameters:
+          pythonVersion: "3.8"
           token: $(pypiToken)
